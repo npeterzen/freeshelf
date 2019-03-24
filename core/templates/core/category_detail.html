@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+    {% for book in category.book_set.all %}
+    <h1 class="f4 bg-near-white br3 br--top black-60 mv0 pv2 ph3">
+        <a href="{% url 'book-detail' slug=book.slug %}"> {{ book.title }}</a>
+    </h1>
+    <div class= "pa3 bt b--black-10">
+        <p class="f6 f5-ns lh-copy measure">
+            {{ book.book_description | truncatewords:50 }}
+        </p>
+        <span class="green">favorited {{ book.favorited_count }} times</span> | 
+        <span>added {{ book.added_on|date:"Y-m-d" }}</span> | 
+        <span>
+        Category:
+        {% for category in book.book_categories.all %}
+            <a style="padding-left:5px" href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+        {% endfor %}
+        </span>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <nav id="category-nav" class="flex items-center">
+        <div>
+        Books by category:
+        </div>
+        <ul class="list ml1 pa0 flex flex-wrap">
+            {% for category in categories %}
+                <li class="mr2 pr2 bw1 br"><a href="{{ category.get_absolute_url }}">{{ category }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+    <h2>Recently added books</h2>
+    <div class= "">
+        <form method="GET" action="{% url 'index' %}">
+            <div>
+                {{ sort_form.as_p }}
+            </div>
+            <button type="submit">Sort</button>
+        </form>
+
+        {% for book in books %}
+        <h1 class="f4 bg-near-white br3 br--top black-60 mv0 pv2 ph3">
+            <a href="{% url 'book-detail' slug=book.slug %}"> {{ book.title }}</a>
+        </h1>
+        <div class= "pa3 bt b--black-10">
+            <p class="f6 f5-ns lh-copy measure">
+                {{ book.book_description | truncatewords:50 }}
+            </p>
+            <span class="green">favorited {{ book.favorited_count }} times</span> | 
+            <span>added {{ book.added_on|date:"Y-m-d" }}</span> | 
+            <span>
+            Category:
+            {% for category in book.book_categories.all %}
+                <a style="padding-left:5px" href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+            {% endfor %}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if books.has_other_pages %}
+    <ul class="pagination">
+        {% if books.has_previous %}
+            <li><a href="?page={{ books.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+            <li class="disabled"><span>&laquo;</span></li>
+        {% endif %}
+        {% for i in books.paginator.page_range %}
+            {% if users.number == i %}
+                <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+            {% else %}
+                <li><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if books.has_next %}
+            <li><a href="?page={{ books.next_page_number }}">&raquo;</a></li>
+        {% else %}
+            <li class="disabled"><span>&raquo;</span></li>
+        {% endif %}
+    </ul>
+    {% endif %}
+
+{% endblock %}
